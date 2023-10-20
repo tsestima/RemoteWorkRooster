@@ -1,3 +1,5 @@
+package old;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -18,7 +20,7 @@ public class CsvCalendarGenerator {
 
         try (FileWriter csvWriter = new FileWriter(csvFilePath)) {
             // Write the CSV header
-            csvWriter.append("Day of the Month,Day of the Week\n");
+            csvWriter.append("Day of the Month,Day of the model.Week\n");
 
             // Create a LocalDate for the first day of the specified month and year
             LocalDate date = LocalDate.of(year, month, 1);
