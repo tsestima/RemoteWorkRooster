@@ -1,7 +1,12 @@
 import model.MonthMap;
 import model.Shift;
 import model.WeekResourceAllocation;
+import util.CalendarUtil;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
@@ -17,10 +22,8 @@ public class MonthAllocationGenerator {
         dayToResources = new Hashtable<>();
     }
 
-    public void generateCalendarAllocation(final MonthMap monthMap) {
+    public void generateCalendarAllocation(final MonthMap monthMap, int year, int month) {
 
-        int year = monthMap.getYear();
-        int month = monthMap.getMonth();
 
         Hashtable<Integer, WeekResourceAllocation> map = monthMap.getMonthMap();
 
@@ -46,8 +49,6 @@ public class MonthAllocationGenerator {
 
                  for (String weekDay: weekdays) {
                      if (weekDay.equals(dayOfWeek)) {
-                         //System.out.println(date.getDayOfMonth() + " " + dayOfWeek + " " + resource);
-
                          ArrayList<String> rs  = dayToResources.get(date.getDayOfMonth());
 
                          if (rs == null) {
@@ -55,7 +56,6 @@ public class MonthAllocationGenerator {
                          }
 
                          rs.add(resource);
-
                          dayToResources.put(date.getDayOfMonth(), rs);
                      }
                  }
@@ -65,19 +65,62 @@ public class MonthAllocationGenerator {
         }
     }
 
-    public void dump() {
-        Enumeration<Integer> e = dayToResources.keys();
+    private String convertToString(ArrayList<String> resources) {
 
-        while (e.hasMoreElements()) {
-            int dayOfMonth = e.nextElement();
-            System.out.println(dayOfMonth + " " + Arrays.toString(dayToResources.get(dayOfMonth).toArray()));
+        StringBuilder sb = new StringBuilder();
+        for (String resource : resources) {
+            sb.append(resource);
+            sb.append(" ");
         }
 
+        return sb.toString();
+    }
+
+    private List<Integer> getSortedListOfKeys() {
+        Set<Integer> keys = dayToResources.keySet();
+        ArrayList<Integer> sorted = new ArrayList<>(keys);
+        Collections.sort(sorted);
+        return sorted;
+    }
+
+    public void dump() {
+
+        List<Integer> days = getSortedListOfKeys();
+        for(Integer dayOfMonth: days){
+            System.out.println(dayOfMonth + " " + convertToString(dayToResources.get(dayOfMonth)));
+        }
+    }
+
+    public void dumpCsv(String filename) {
+
+        List<Integer> days = getSortedListOfKeys();
+
+        StringBuilder txt = new StringBuilder();
+
+        for (Integer dayOfTheMonth : days) {
+            txt.append("\n");
+            txt.append(dayOfTheMonth);
+            txt.append(",");
+            txt.append(convertToString(dayToResources.get(dayOfTheMonth)));
+        }
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(txt.toString());
+            writer.close();
+        } catch (Exception e) {
+            System.err.println("Cannot write to file " + filename + ".");
+        }
     }
 
     public static void main(String[] args) {
 
-        MonthMap monthMap = new MonthMap(2023, 10);
+        int year = 2023;
+        int month = 10;
+
+        MonthMap monthMap = new MonthMap();
+        ArrayList<Integer> weekNumbers = CalendarUtil.getWeekNumbers(year, month);
+
         String[] resources = new String[]{"MD", "OA", "TE"};
 
         Hashtable<String, Integer> initialShift = new Hashtable<>();
@@ -85,12 +128,14 @@ public class MonthAllocationGenerator {
         initialShift.put("OA", 1);
         initialShift.put("TE", 2);
 
-        monthMap.calculateAllocations(resources, new Shift(), initialShift);
+        monthMap.calculateAllocations(resources, new Shift(), weekNumbers, initialShift);
         monthMap.dump();
 
         System.out.println("\n\n");
         MonthAllocationGenerator generator = new MonthAllocationGenerator();
-        generator.generateCalendarAllocation(monthMap);
+        generator.generateCalendarAllocation(monthMap, year, month);
         generator.dump();
+
+        generator.dumpCsv("out.csv");
     }
 }

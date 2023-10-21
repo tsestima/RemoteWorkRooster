@@ -1,32 +1,32 @@
 package model;
 
-import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.time.temporal.WeekFields;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 public class MonthMap {
 
-    private int year;
+    /** Week number to allocation.*/
+    private final Hashtable<Integer, WeekResourceAllocation> monthMap;
 
-    private int month;
-
-    private final ArrayList<Integer> weekNumbers;
-
-    private Hashtable<Integer, WeekResourceAllocation> monthMap;
-
-    public MonthMap(int year, int month) {
-        this.year = year;
-        this.month = month;
+    public MonthMap() {
         monthMap = new Hashtable<>();
-        weekNumbers = getWeekNumbers(year, month);
     }
 
-    public void calculateAllocations(final String[] resources, final Shift shifts, Hashtable<String, Integer> resShif) {
+    /**
+     * Calculate allocations for given week numbers.
+     *
+     * @param resources the resources to allocate.
+     * @param shifts the available shifts.
+     * @param weekNumbers The week numbers to generate.
+     * @param resShif The initial week allocation.
+     */
+    public void calculateAllocations(final String[] resources,
+                                     final Shift shifts,
+                                     final ArrayList<Integer> weekNumbers,
+                                     final Hashtable<String, Integer> resShif) {
 
         for (Integer w : weekNumbers) {
-
             WeekResourceAllocation weekToShift = new WeekResourceAllocation(w);
 
             for (String r : resources) {
@@ -44,43 +44,14 @@ public class MonthMap {
         }
     }
 
-    private ArrayList<Integer> getWeekNumbers(int year, int month) {
-        LocalDate date = LocalDate.of(year, month, 1);
-        ArrayList<Integer> weeks = new ArrayList<>();
-
-        // Loop through the days of the month
-        WeekFields weekFields = WeekFields.of(Locale.getDefault());
-
-        while (date.getMonthValue() == month) {
-            String dayOfMonth = String.valueOf(date.getDayOfMonth());
-            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-
-            int weekNumber = date.get(weekFields.weekOfYear());
-            if (!weeks.contains(weekNumber))
-                weeks.add(weekNumber);
-
-            // Move to the next day
-            date = date.plusDays(1);
-        }
-
-        return weeks;
-    }
 
     public Hashtable<Integer, WeekResourceAllocation> getMonthMap() {
         return monthMap;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
     public void dump() {
 
-        System.out.println("Dump allocation for " + year + " month " + month);
+        System.out.println("Dump allocation");
         Hashtable<Integer, WeekResourceAllocation> mm = getMonthMap();
 
         Enumeration<Integer> en = mm.keys();
