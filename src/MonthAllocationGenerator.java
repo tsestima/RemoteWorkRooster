@@ -1,12 +1,9 @@
 import model.MonthMap;
 import model.Shift;
 import model.WeekResourceAllocation;
-import util.CalendarUtil;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
@@ -113,29 +110,26 @@ public class MonthAllocationGenerator {
         }
     }
 
+
+    private static final String USAGE = "java "
+            + MonthAllocationGenerator.class.getName() + " <year> <month> <resources list>";
+
     public static void main(String[] args) {
 
-        int year = 2023;
-        int month = 10;
+        int year;
+        int month;
 
-        MonthMap monthMap = new MonthMap();
-        ArrayList<Integer> weekNumbers = CalendarUtil.getWeekNumbers(year, month);
+        try {
+            year = Integer.parseInt(args[0]);
+            month = Integer.parseInt(args[1]);
 
-        String[] resources = new String[]{"MD", "OA", "TE"};
 
-        Hashtable<String, Integer> initialShift = new Hashtable<>();
-        initialShift.put("MD", 0);
-        initialShift.put("OA", 1);
-        initialShift.put("TE", 2);
 
-        monthMap.calculateAllocations(resources, new Shift(), weekNumbers, initialShift);
-        monthMap.dump();
+        } catch (Exception e) {
+            System.err.println(USAGE);
+            System.exit(-1);
+        }
 
-        System.out.println("\n\n");
-        MonthAllocationGenerator generator = new MonthAllocationGenerator();
-        generator.generateCalendarAllocation(monthMap, year, month);
-        generator.dump();
-
-        generator.dumpCsv("out.csv");
     }
+
 }
