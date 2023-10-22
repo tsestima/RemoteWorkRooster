@@ -1,26 +1,37 @@
+package calendar;
+
 import model.MonthMap;
 import model.Shift;
 import model.WeekResourceAllocation;
+import util.CalendarUtil;
+import util.FileUtil;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.*;
 
-public class MonthAllocationGenerator {
+public class AllocationGenerator {
 
     private final Hashtable<Integer, ArrayList<String>> dayToResources;
 
-    Shift shift = new Shift();
+    private final Shift shift;
 
-    public MonthAllocationGenerator() {
+    public AllocationGenerator() {
         dayToResources = new Hashtable<>();
+        shift = new Shift();
     }
 
-    public void generateCalendarAllocation(final MonthMap monthMap, int year, int month) {
+    public void generateCalendarAllocation(final String filename,
+                                           final int year,
+                                           final int month,
+                                           final String[] availableResources,
+                                           final Hashtable<String, Integer> initialShift) {
 
+        ArrayList<Integer> weekNumbers = CalendarUtil.getWeekNumbers(year, month);
+
+        MonthMap monthMap = new MonthMap();
+        monthMap.calculateAllocations(availableResources, new Shift(), weekNumbers, initialShift);
 
         Hashtable<Integer, WeekResourceAllocation> map = monthMap.getMonthMap();
 
@@ -41,6 +52,7 @@ public class MonthAllocationGenerator {
             Set<String> resources = allocation.getResources();
 
             for (String resource: resources) {
+
                  Integer shiftNbr = allocation.get(resource);
                  String[] weekdays = shift.getShift(shiftNbr);
 
@@ -60,10 +72,13 @@ public class MonthAllocationGenerator {
 
             date = date.plusDays(1);
         }
+
+        dumpCsv(filename);
     }
 
-    private String convertToString(ArrayList<String> resources) {
+    private String convertToString(final ArrayList<String> resources) {
 
+        Collections.sort(resources);
         StringBuilder sb = new StringBuilder();
         for (String resource : resources) {
             sb.append(resource);
@@ -83,53 +98,24 @@ public class MonthAllocationGenerator {
     public void dump() {
 
         List<Integer> days = getSortedListOfKeys();
-        for(Integer dayOfMonth: days){
+        for(Integer dayOfMonth: days) {
             System.out.println(dayOfMonth + " " + convertToString(dayToResources.get(dayOfMonth)));
         }
     }
 
-    public void dumpCsv(String filename) {
+    public void dumpCsv(final String filename) {
 
         List<Integer> days = getSortedListOfKeys();
 
         StringBuilder txt = new StringBuilder();
 
         for (Integer dayOfTheMonth : days) {
-            txt.append("\n");
             txt.append(dayOfTheMonth);
             txt.append(",");
             txt.append(convertToString(dayToResources.get(dayOfTheMonth)));
+            txt.append("\n");
         }
 
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(txt.toString());
-            writer.close();
-        } catch (Exception e) {
-            System.err.println("Cannot write to file " + filename + ".");
-        }
+        FileUtil.writeFile(filename, txt.toString());
     }
-
-
-    private static final String USAGE = "java "
-            + MonthAllocationGenerator.class.getName() + " <year> <month> <resources list>";
-
-    public static void main(String[] args) {
-
-        int year;
-        int month;
-
-        try {
-            year = Integer.parseInt(args[0]);
-            month = Integer.parseInt(args[1]);
-
-
-
-        } catch (Exception e) {
-            System.err.println(USAGE);
-            System.exit(-1);
-        }
-
-    }
-
 }

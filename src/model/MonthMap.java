@@ -44,7 +44,6 @@ public class MonthMap {
         }
     }
 
-
     public Hashtable<Integer, WeekResourceAllocation> getMonthMap() {
         return monthMap;
     }

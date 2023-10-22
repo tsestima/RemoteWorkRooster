@@ -1,8 +1,9 @@
 package calendar;
 
+import util.FileUtil;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,22 +37,13 @@ public class CalendarGenerator {
         return html;
     }
 
-    private static void writeFile(String filename, String content) {
-        // Write the HTML to a file
-        try {
-            FileWriter fileWriter = new FileWriter("calendar.html");
-            fileWriter.write(content.toString());
-            fileWriter.close();
-            System.out.println("Calendar HTML generated and saved as 'calendar.html'");
-        } catch (IOException e) {
-            System.err.println("Cannot write calendar! " + e.getMessage());
-        }
-    }
-
-    public static void generateCalendarHTML(final String title,
+    public static void generateCalendarHTML(final String filename,
+                                            final String title,
                                             final int year,
-                                            final int month,
-                                            final List<String> events) {
+                                            final int month) {
+
+        List<String> events = readEventsFromCSV(filename);
+
         StringBuilder html = new StringBuilder(getHtmlHeader());
 
         html.append("<body><h2>" + title + " " + month + "/" + year + "</h2>\n");
@@ -64,7 +56,6 @@ public class CalendarGenerator {
         cal.set(year, month - 1, 1);
         int firstDayOfMonth = cal.get(Calendar.DAY_OF_WEEK);
 
-        // Get the number of days in the month
         int numDaysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         int day = 1;
@@ -108,17 +99,8 @@ public class CalendarGenerator {
         }
 
         html.append("</table>\n</body>\n</html>");
-        writeFile("calendar.html", html.toString());
 
+        FileUtil.writeFile("calendar.html", html.toString());
     }
 
-    public static void main(String[] args) {
-        int year = 2023; // Replace with the desired year
-        int month = 10; // Replace with the desired month (1-12)
-
-        List<String> events = readEventsFromCSV("out.csv");
-
-        // Sample
-        generateCalendarHTML("Calendário Presencial ASD: ", year, month, events);
-    }
 }
