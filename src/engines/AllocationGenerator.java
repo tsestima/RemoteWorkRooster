@@ -1,4 +1,4 @@
-package calendar;
+package engines;
 
 import model.MonthMap;
 import model.Shift;
@@ -25,13 +25,13 @@ public class AllocationGenerator {
     public void generateCalendarAllocation(final String filename,
                                            final int year,
                                            final int month,
-                                           final String[] availableResources,
-                                           final Hashtable<String, Integer> initialShift) {
+                                           final Hashtable<String, Integer> resourcesShifts) {
+
 
         ArrayList<Integer> weekNumbers = CalendarUtil.getWeekNumbers(year, month);
 
         MonthMap monthMap = new MonthMap();
-        monthMap.calculateAllocations(availableResources, new Shift(), weekNumbers, initialShift);
+        monthMap.calculateAllocations(new Shift(), weekNumbers, resourcesShifts);
 
         Hashtable<Integer, WeekResourceAllocation> map = monthMap.getMonthMap();
 
@@ -73,7 +73,7 @@ public class AllocationGenerator {
             date = date.plusDays(1);
         }
 
-        dumpCsv(filename);
+        dumpCsv(filename, year, month);
     }
 
     private String convertToString(final ArrayList<String> resources) {
@@ -103,11 +103,13 @@ public class AllocationGenerator {
         }
     }
 
-    public void dumpCsv(final String filename) {
+    public void dumpCsv(final String filename, int year, int month) {
 
         List<Integer> days = getSortedListOfKeys();
-
         StringBuilder txt = new StringBuilder();
+
+        txt.append("# Calendar for: " + year + "/" + month + "\n");
+        txt.append("# Day of month, Resources\n");
 
         for (Integer dayOfTheMonth : days) {
             txt.append(dayOfTheMonth);

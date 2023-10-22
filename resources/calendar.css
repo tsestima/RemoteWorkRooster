@@ -1,11 +1,10 @@
-/* Smaller calendar styles */
 table.calendar {
     width: 50%; /* Adjust the width to your preference */
     margin: 0 auto; /* Center the calendar */
 }
 
 table.calendar th {
-    background-color: #007BFF;
+    background-color: #15bd90;
     color: #fff;
     font-size: 14px; /* Adjust the font size */
 }
@@ -27,6 +26,3 @@ h2 {
     font-size: 20px; /* Adjust the title font size */
     margin: 10px 0; /* Add some margin for spacing */
 }
-
-
-/* You can further customize the size and style as needed */

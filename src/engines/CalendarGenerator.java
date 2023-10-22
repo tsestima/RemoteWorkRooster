@@ -1,4 +1,4 @@
-package calendar;
+package engines;
 
 import util.FileUtil;
 
@@ -11,42 +11,57 @@ import java.util.List;
 
 public class CalendarGenerator {
 
-    public static List<String> readEventsFromCSV(final String file) {
+    private List<String> events;
 
-        List<String> events = new ArrayList<>();
+    private int year;
+
+    private int month;
+
+    public void readEventsFromCSV(final String file) {
+
+        events = new ArrayList<>();
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
+
+            // Parse first line with the date
+            String firstLine = br.readLine();
+            String date = firstLine.split(":")[1];
+            String[] dateSplit = date.split("/");
+
+            year = Integer.parseInt(dateSplit[0].trim());
+            month = Integer.parseInt(dateSplit[1].trim());
+
+            br.readLine(); // Ignore header
+
             while ((line = br.readLine()) != null) {
                 events.add(line);
             }
+
             br.close();
+
         } catch (IOException e) {
             System.err.println("Cannot read " + file + "! Abort!");
             System.exit(-1);
         }
-
-        return events;
     }
 
-    private static String getHtmlHeader() {
-        String html = "<html>\n<head>\n" +
+    private String getHtmlHeader() {
+        return "<html>\n<head>\n" +
                 "\t<link rel='stylesheet' type='text/css' href='resources/calendar.css'>\n" +
                 "</head>\n";
-        return html;
     }
 
-    public static void generateCalendarHTML(final String filename,
-                                            final String title,
-                                            final int year,
-                                            final int month) {
+    public void generateCalendarHTML(final String csvFilename,
+                                     final String title,
+                                     final String htmlFilename) {
 
-        List<String> events = readEventsFromCSV(filename);
+        readEventsFromCSV(csvFilename);
 
         StringBuilder html = new StringBuilder(getHtmlHeader());
 
-        html.append("<body><h2>" + title + " " + month + "/" + year + "</h2>\n");
+        html.append("<body><h2>" + title + " - " + year + "/" + month + "</h2>\n");
         html.append("<table class='calendar'>\n<tr>\n");
         html.append("<th>Sun</th>\n<th>Mon</th>\n<th>Tue</th>\n");
         html.append("<th>Wed</th>\n<th>Thu</th>\n<th>Fri</th>\n<th>Sat</th>\n</tr>\n");
@@ -100,7 +115,6 @@ public class CalendarGenerator {
 
         html.append("</table>\n</body>\n</html>");
 
-        FileUtil.writeFile("calendar.html", html.toString());
+        FileUtil.writeFile(htmlFilename, html.toString());
     }
-
 }

@@ -1,0 +1,12 @@
+# Resource, initial week shift
+
+#
+# Shifts:
+#
+# 0: Mon, Tue, Wed
+# 1: Tue, Wed, Thu
+# 2: Wed, Thu, Fri
+
+MD,0
+TE,1
+OA,2

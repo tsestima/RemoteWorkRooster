@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Set;
 
 public class MonthMap {
 
@@ -16,20 +17,21 @@ public class MonthMap {
     /**
      * Calculate allocations for given week numbers.
      *
-     * @param resources the resources to allocate.
      * @param shifts the available shifts.
      * @param weekNumbers The week numbers to generate.
      * @param resShif The initial week allocation.
      */
-    public void calculateAllocations(final String[] resources,
-                                     final Shift shifts,
+    public void calculateAllocations(final Shift shifts,
                                      final ArrayList<Integer> weekNumbers,
                                      final Hashtable<String, Integer> resShif) {
+
+
+        Set<String> resourcesList = resShif.keySet();
 
         for (Integer w : weekNumbers) {
             WeekResourceAllocation weekToShift = new WeekResourceAllocation(w);
 
-            for (String r : resources) {
+            for (String r : resourcesList) {
                 Integer s = resShif.get(r);
 
                 weekToShift.put(r, s);

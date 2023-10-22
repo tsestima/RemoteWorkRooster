@@ -1,13 +1,21 @@
-import calendar.CalendarGenerator;
-
-import java.util.List;
+import engines.CalendarGenerator;
 
 public class GenerateCalendar {
 
-    public static void main(String[] args) {
-        int year = 2023; // Replace with the desired year
-        int month = 11; // Replace with the desired month (1-12)
+    public static void main(final String[] args) {
 
-        CalendarGenerator.generateCalendarHTML("out.csv","Calendário Presencial ASD: ", year, month);
+        String inputCsv = "";
+        String outputhtml = "";
+
+        try {
+            inputCsv = args[0];
+            outputhtml = args[1];
+        } catch (Exception e) {
+            System.err.println("Usage java " + GenerateCalendar.class.getName() + " <input csv filename> <output html filename>");
+            System.exit(-1);
+        }
+
+        CalendarGenerator generator = new CalendarGenerator();
+        generator.generateCalendarHTML(inputCsv,"Calendário Presencial equipa ASD", outputhtml);
     }
 }
