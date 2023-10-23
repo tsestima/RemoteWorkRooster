@@ -1,12 +1,15 @@
 package engines;
 
 import util.FileUtil;
+import util.HolidaysReader;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.List;
 
 public class CalendarGenerator {
@@ -18,6 +21,12 @@ public class CalendarGenerator {
     private int year;
 
     private int month;
+
+    private final Hashtable<LocalDate, String> holidays;
+
+    public CalendarGenerator() {
+        holidays = HolidaysReader.readHolidaysFile("resources/holidays.csv");
+    }
 
     public void readAllocationFromCsv(final String file) {
 
@@ -62,20 +71,21 @@ public class CalendarGenerator {
         readAllocationFromCsv(csvFilename);
 
         StringBuilder html = new StringBuilder(getHtmlHeader());
-        String titleString = title + " - " + year + "/" + month;
+        String titleString = title + " - " + year + "/" + String.format("%02d", month)
+                ;
 
-        html.append("<body><h2>");
+        html.append("<body><br><h2>");
         html.append(titleString);
-        html.append("</h2>\n");
+        html.append("</h2>\n<br>");
         html.append("<table class='calendar'>\n<tr>\n");
         html.append("<th>Sun</th>\n<th>Mon</th>\n<th>Tue</th>\n");
         html.append("<th>Wed</th>\n<th>Thu</th>\n<th>Fri</th>\n<th>Sat</th>\n</tr>\n");
 
         // Calculate the first day of the month
         Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, 1);
-        int firstDayOfMonth = cal.get(Calendar.DAY_OF_WEEK);
+        cal.set(year, month - 1, 1);  // Neet to start in the previous month (week can start before)
 
+        int firstDayOfMonth = cal.get(Calendar.DAY_OF_WEEK);
         int numDaysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         int day = 1;
@@ -97,6 +107,12 @@ public class CalendarGenerator {
                 } else if (day <= numDaysInMonth) {
 
                     StringBuilder cellContent = new StringBuilder(day + "<br>");
+                    String holiday = holidays.get(LocalDate.of(year, month, day));
+
+                    if (holiday != null) {
+                        cellContent.append("<spam style=\"font-size:10;color:#990033;\">");
+                        cellContent.append(holiday + "</spam><br><br>");
+                    }
 
                     for (String event : events) {
 
@@ -119,7 +135,6 @@ public class CalendarGenerator {
         }
 
         html.append("</table>\n</body>\n</html>");
-
         FileUtil.writeFile(htmlFilename, html.toString());
     }
 }

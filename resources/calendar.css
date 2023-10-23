@@ -1,28 +1,32 @@
 table.calendar {
-    width: 50%; /* Adjust the width to your preference */
+    width: 85%; /* Adjust the width to your preference */
     margin: 0 auto; /* Center the calendar */
 }
 
 table.calendar th {
     background-color: #15bd90;
     color: #fff;
-    font-size: 14px; /* Adjust the font size */
+    font-size: 18px;
 }
 
 table.calendar th, table.calendar td {
     border: 1px solid #ddd;
     text-align: center;
-    padding: 4px; /* Adjust the padding */
+
+    padding-top:    10px;
+    padding-bottom: 10px;
+    padding-left:   20px;
+    padding-right:  20px;
 }
 
 table.calendar td {
     background-color: #f2f2f2;
-    font-size: 12px; /* Adjust the font size */
+    font-size: 12px;
 }
 
 /* Center the title */
 h2 {
     text-align: center;
     font-size: 20px; /* Adjust the title font size */
-    margin: 10px 0; /* Add some margin for spacing */
+    margin: 5px 0; /* Add some margin for spacing */
 }
