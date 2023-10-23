@@ -12,11 +12,11 @@ public class GenerateAllocation {
         String outputFilename = "";
 
         try {
-            outputFilename = args[0];
-            year = Integer.parseInt(args[1]);
-            month = Integer.parseInt(args[2]);
+            year = Integer.parseInt(args[0]);
+            month = Integer.parseInt(args[1]);
+            outputFilename = args[2];
         } catch (Exception e) {
-            System.err.println("Usage: java GenerateAllocation <output csv filename> <year> <month>");
+            System.err.println("Usage: java " + GenerateAllocation.class.getName() + " <year> <month> <output csv filename>");
             System.exit(1);
         }
 

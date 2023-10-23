@@ -11,13 +11,15 @@ import java.util.List;
 
 public class CalendarGenerator {
 
+    public static final int DAYS_IN_THE_WEEK = 7;
+    public static final int ROWS = 6;
     private List<String> events;
 
     private int year;
 
     private int month;
 
-    public void readEventsFromCSV(final String file) {
+    public void readAllocationFromCsv(final String file) {
 
         events = new ArrayList<>();
 
@@ -57,11 +59,14 @@ public class CalendarGenerator {
                                      final String title,
                                      final String htmlFilename) {
 
-        readEventsFromCSV(csvFilename);
+        readAllocationFromCsv(csvFilename);
 
         StringBuilder html = new StringBuilder(getHtmlHeader());
+        String titleString = title + " - " + year + "/" + month;
 
-        html.append("<body><h2>" + title + " - " + year + "/" + month + "</h2>\n");
+        html.append("<body><h2>");
+        html.append(titleString);
+        html.append("</h2>\n");
         html.append("<table class='calendar'>\n<tr>\n");
         html.append("<th>Sun</th>\n<th>Mon</th>\n<th>Tue</th>\n");
         html.append("<th>Wed</th>\n<th>Thu</th>\n<th>Fri</th>\n<th>Sat</th>\n</tr>\n");
@@ -75,7 +80,7 @@ public class CalendarGenerator {
 
         int day = 1;
 
-        for (int row = 1; row <= 6; row++) {
+        for (int row = 1; row <= ROWS; row++) {
 
             if (row > 1 && day > numDaysInMonth) {
                 break; // Exit the loop if all days have been processed
@@ -83,7 +88,7 @@ public class CalendarGenerator {
 
             html.append("<tr>\n");
 
-            for (int col = 1; col <= 7; col++) {
+            for (int col = 1; col <= DAYS_IN_THE_WEEK; col++) {
 
                 if (row == 1 && col < firstDayOfMonth) {
 

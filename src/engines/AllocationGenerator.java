@@ -27,7 +27,6 @@ public class AllocationGenerator {
                                            final int month,
                                            final Hashtable<String, Integer> resourcesShifts) {
 
-
         ArrayList<Integer> weekNumbers = CalendarUtil.getWeekNumbers(year, month);
 
         MonthMap monthMap = new MonthMap();
@@ -46,7 +45,7 @@ public class AllocationGenerator {
 
             if (allocation == null) {
                 System.out.println("Error: No allocation for week " + weekNumber);
-                System.exit(1);
+                System.exit(-1);
             }
 
             Set<String> resources = allocation.getResources();
@@ -76,7 +75,7 @@ public class AllocationGenerator {
         dumpCsv(filename, year, month);
     }
 
-    private String convertToString(final ArrayList<String> resources) {
+    private String convertResourcesToString(final ArrayList<String> resources) {
 
         Collections.sort(resources);
         StringBuilder sb = new StringBuilder();
@@ -99,7 +98,7 @@ public class AllocationGenerator {
 
         List<Integer> days = getSortedListOfKeys();
         for(Integer dayOfMonth: days) {
-            System.out.println(dayOfMonth + " " + convertToString(dayToResources.get(dayOfMonth)));
+            System.out.println(dayOfMonth + " " + convertResourcesToString(dayToResources.get(dayOfMonth)));
         }
     }
 
@@ -114,7 +113,7 @@ public class AllocationGenerator {
         for (Integer dayOfTheMonth : days) {
             txt.append(dayOfTheMonth);
             txt.append(",");
-            txt.append(convertToString(dayToResources.get(dayOfTheMonth)));
+            txt.append(convertResourcesToString(dayToResources.get(dayOfTheMonth)));
             txt.append("\n");
         }
 
