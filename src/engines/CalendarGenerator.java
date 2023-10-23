@@ -16,7 +16,7 @@ public class CalendarGenerator {
 
     public static final int DAYS_IN_THE_WEEK = 7;
     public static final int ROWS = 6;
-    private List<String> events;
+    private List<String> resourcesAllocation;
 
     private int year;
 
@@ -30,7 +30,7 @@ public class CalendarGenerator {
 
     public void readAllocationFromCsv(final String file) {
 
-        events = new ArrayList<>();
+        resourcesAllocation = new ArrayList<>();
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -47,7 +47,7 @@ public class CalendarGenerator {
             br.readLine(); // Ignore header
 
             while ((line = br.readLine()) != null) {
-                events.add(line);
+                resourcesAllocation.add(line);
             }
 
             br.close();
@@ -110,16 +110,18 @@ public class CalendarGenerator {
                     String holiday = holidays.get(LocalDate.of(year, month, day));
 
                     if (holiday != null) {
+
                         cellContent.append("<spam style=\"font-size:10;color:#990033;\">");
                         cellContent.append(holiday + "</spam><br><br>");
-                    }
 
-                    for (String event : events) {
+                    } else {
 
-                        String[] eventData = event.split(",");
+                        for (String event : resourcesAllocation) {
+                            String[] eventData = event.split(",");
 
-                        if (!eventData[0].isEmpty() && Integer.parseInt(eventData[0]) == day) {
-                            cellContent.append(eventData[1]).append("<br>");
+                            if (!eventData[0].isEmpty() && Integer.parseInt(eventData[0]) == day) {
+                                cellContent.append(eventData[1]).append("<br>");
+                            }
                         }
                     }
 
