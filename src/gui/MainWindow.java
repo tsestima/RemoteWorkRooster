@@ -16,6 +16,7 @@ public class MainWindow extends JFrame {
 
     public MainWindow() {
         initComponent();
+        setTitle("Resources Map Generator");
     }
 
     private void initComponent() {
@@ -29,35 +30,31 @@ public class MainWindow extends JFrame {
 
         JLabel yearLbl = new JLabel("Year:  ");
         JTextField yearTxt = new JTextField(4);
-
-        JPanel yearPanel = new JPanel();
-        yearPanel.setLayout(new BoxLayout(yearPanel, BoxLayout.LINE_AXIS));
-
-        yearPanel.add(yearLbl);
-        yearPanel.add(yearTxt);
-
-        JLabel monthLbl = new JLabel("Month: ");
+        JLabel monthLbl = new JLabel(" Month: ");
         JTextField monthTxt = new JTextField(2);
 
-        JPanel monthPanel = new JPanel();
-        monthPanel.setLayout(new BoxLayout(monthPanel, BoxLayout.LINE_AXIS));
-        monthPanel.add(monthLbl);
-        monthPanel.add(monthTxt);
+        JPanel csvInputPanel = new JPanel();
+        csvInputPanel.setLayout(new BoxLayout(csvInputPanel, BoxLayout.LINE_AXIS));
 
-        JLabel outFilenameLabel = new JLabel("Output csv filename: ");
+        JLabel outFilenameLabel = new JLabel(" Output csv filename: ");
         JTextField outFilenameTxt = new JTextField(10);
 
-        JPanel outfilenamePanel = new JPanel();
-        outfilenamePanel.setLayout(new BoxLayout(outfilenamePanel, BoxLayout.LINE_AXIS));
-        outfilenamePanel.add(outFilenameLabel);
-        outfilenamePanel.add(outFilenameTxt);
+        csvInputPanel.add(yearLbl);
+        csvInputPanel.add(yearTxt);
+        csvInputPanel.add(monthLbl);
+        csvInputPanel.add(monthTxt);
+        csvInputPanel.add(outFilenameLabel);
+        csvInputPanel.add(outFilenameTxt);
 
         JButton generateCsvButton = new JButton("GENERATE MAPPING");
 
-        generateMappingPanel.add(yearPanel);
-        generateMappingPanel.add(monthPanel);
-        generateMappingPanel.add(outfilenamePanel);
+        JPanel csvTitlePanel = new JPanel();
+        csvTitlePanel.add(new JLabel("CSV allocation generation:"));
 
+        generateMappingPanel.add(csvTitlePanel);
+        generateMappingPanel.add(Box.createVerticalStrut(10));
+        generateMappingPanel.add(csvInputPanel);
+        generateMappingPanel.add(Box.createVerticalStrut(10));
         generateMappingPanel.add(generateCsvButton);
 
         // END Generate CSV file
@@ -79,6 +76,11 @@ public class MainWindow extends JFrame {
 
         JButton generateCalendarButton = new JButton("GENERATE CALENDAR");
 
+        JPanel htmlTitlePanel = new JPanel();
+        htmlTitlePanel.add(new JLabel("HTML calendar generation:"));
+
+        generateCalendarPanel.add(htmlTitlePanel);
+        generateCalendarPanel.add(Box.createVerticalStrut(10));
         generateCalendarPanel.add(inputCsvButton);
         generateCalendarPanel.add(outCalFilenamePanel);
         generateCalendarPanel.add(generateCalendarButton);
@@ -89,6 +91,8 @@ public class MainWindow extends JFrame {
         logPanel.setLayout(new BorderLayout());
         JTextArea logText = new JTextArea(5,70);
         JScrollPane pane = new JScrollPane(logText);
+
+        logPanel.add(new JLabel("Log: "), BorderLayout.NORTH);
         logPanel.add(pane, BorderLayout.CENTER);
 
         // Add to the main panel
